@@ -1,0 +1,11 @@
+# AutoPDB
+There are a lot of protein complexes on the PDB database, which provides rich information. 
+However, it is not easy to get the information of the protein complexes, such as the chains belonging to which part of the complex. 
+This project is to provide a tool to automatically get the information of the protein complexes on the PDB database by using the PDB API and LLM.
+
+## Requirements
+Two main packages are required to trigger the program. One package is Ollama and the other is request. The motivation for using request  is to get the information of graphQL in PDBbank through API for PDBbank. And for Ollama, it is used for identifying the quantity of the protein complexes and discovering which of those are binding with each other. The more details will be introduced in the following.
+### request
+[PDBbank](https://www.rcsb.org/)  is a database that serves as a repository for the three-dimensional structural data of large biological molecules, such as proteins and nucleic acids. And we can get one particular protein information and structure through there. And for every particular protein complex, PDBbank provides the information such as *entity_ids*, *pubmed_id*, *rcsb_pubmed_abstract_text*,*title*, properties of chain stored in graphQL on the website. This project *AutoPDB* will gain the important factors titile,abstract, from PDBbank API according to PDBbind database by just using request packages. More details will be shown in the code.
+### Ollama
+[Ollama](https://ollama.com/) is a new software which can support to be downloaded into person laptops and to let people interact with the machine as well like easy version of chatgpt. And Ollama also posts new ollama2 in different data size to train this big model to be as strong as chatgpt. It also provides the usage in python. Since for particular protein complex PDB file, it is difficult to distinguish how many protein complexes are binding with each others and which ones are protein A B C(A B C are distinct protein structures). Thus ollama:70b in Ollama supports us to identify these in an efficient training way. Atfer this, we can get the complete information for what we want to do protein protein binding problem.

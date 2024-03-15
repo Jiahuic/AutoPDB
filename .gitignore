@@ -1,0 +1,11 @@
+# Ignore .json files in the json_protein folder
+#json_protein/*.json
+#json_protein/json_protein/*.json
+#json_protein/json_protein/1_protein/*.json
+json_protein/
+**/*.pdb
+**/*.pdf
+data/PDBbind2020/PP/
+test/
+archive/
+**/__pycache__/
