@@ -14,47 +14,73 @@ Functions:
 
 import os
 import ollama
-from langchain.prompts import PromptTemplate, ChatMessagePromptTemplate
+from langchain_core.prompts import SystemMessagePromptTemplate, ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_community.llms import Ollama
 from collections import Counter
 
+try:
+    from .PDB_query_prompt import biologist_PPI, message_PPI, message_failure
+except:
+    from PDB_query_prompt import biologist_PPI, message_PPI, message_failure
 
-def get_protein_partner(entry_dict, epoch=10):
-    entry_id         = entry_dict['entry_id']
-    title            = entry_dict['title']
-    abstract         = entry_dict['abstract']
-    polymer_entities = entry_dict['polymer_entities']
+def parse_response(response):
+    response = response.split("\n")
+    number_entities = len(response)
+
+    binding_protein = {}
+    for entity in response:
+        entity_id, entity_description = entity.split(" - ")
+        binding_protein[entity_id] = entity_description
+
+    return binding_protein
+
+def get_protein_partner(entry_dict, epoch=10, model="gpt-3.5-turbo"):
+    entry_id           = entry_dict['entry_id']
+    title              = entry_dict['title']
+    abstract           = entry_dict['abstract']
+    entity_description = entry_dict['entity_description']
+
+    # Get the polymer entity chain IDs. Only needed after the reply
+    entity_id_auth_asym_ids = entry_dict["entity_auth_asym_ids"] 
 
     # Format the message with title and abstract text
-    chat_prompt = ChatMessagePromptTemplate.from_template(
-        role = "assistant",
-        template = """ 
-        You are a biologist. Your role is to identify the binding protein of protein-protein interactions. Targeting the designed particles, antibodies, nanobodies, etc. Your return will be the chain ID. If there are multiple duplicated ID, just return the first one. Otherwise, return all the chain ID. The 'polymer_entities' section provides 'rcsb_polymer_entity_container_identifiers' for chain IDs and 'rcsb_polymer_entity' for chain descriptions.
-        The entry ID {entry_id}, title {title}, abstract {abstract}, and polymer entities: {polymer_entities}.
-        """
-    )
+    system_message = SystemMessagePromptTemplate.from_template(biologist_PPI)
+    user_message = HumanMessagePromptTemplate.from_template(message_PPI)
 
-    llm_openai = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
-    print(llm_openai.invoke([chat_prompt.format(entry_id=entry_id, title=title, abstract=abstract, polymer_entities=polymer_entities)]))
-    exit()
+    chat_prompt = ChatPromptTemplate.from_messages([system_message, user_message]).format(entry_id=entry_id, title=title, abstract=abstract, entity_description=entity_description)
 
-    llm = Ollama(model="llama2:70b")
-    print(llm.invoke([chat_prompt.format(entry_id=entry_id, title=title, abstract=abstract, polymer_entities=polymer_entities)]))
-    exit()
+    binding_proteins = []
+    for i in range(epoch): # ensemble of all the models
+        if model[:3] == "gpt":
+            llm_openai = ChatOpenAI(model=model, temperature=0)
+            response = llm_openai.invoke([chat_prompt]).content # each line of the response is a separate entity
+        elif model[:6] == "llama2":
+            llm = Ollama(model=model)
+            response = llm.invoke([chat_prompt])
 
-    proteinA = []
+        # check if the response contains the "I cannot identify the binding protein."
+        if message_failure in response:
+            # print(message_failure)
+            binding_proteins.append(None)
+        try:
+            binding_protein = parse_response(response)
+            binding_proteins.append(binding_protein)
+        except:
+            binding_proteins.append(None)
 
     # for i in range(epoch):
         # Call Ollama API
         # response = ollama.generate(model='llama2', prompt=message)
 
-    return proteinA, proteinB
+    return
 
 if __name__ == "__main__":
-    from api_PDB import ask_PDB
+    from api_PDB import ask_RCSB_PDB
 
     entry_id = "6nk7"
-    entry_dict = ask_PDB(entry_id)
+    entry_id = "3ZIA"
+    # entry_id = "1rvj" # 1rvj has no binding protein. The binding is about reaction center and the quinone molecule QB.
+    entry_dict, expression_systems_entity_id = ask_RCSB_PDB(entry_id)
 
     get_protein_partner(entry_dict)

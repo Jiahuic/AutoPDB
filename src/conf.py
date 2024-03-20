@@ -11,4 +11,6 @@ LastEditTime: 00/00/2024
 
 """
 
-path_v2020_PP = "../data/PDBbind2020/PP/"
+path_v2020 = "../data/PDBbind2020/"
+path_v2020_PP = path_v2020 + "PP/"
+unknown_PDB_list = path_v2020 + "unknown_PP.2020"
