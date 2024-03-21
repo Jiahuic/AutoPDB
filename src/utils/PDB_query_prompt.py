@@ -26,19 +26,19 @@ Your return will be the entity ID.
 The polymer entities provide the information of each entity description.
 If you cannot identify the binding protein, please return "I cannot identify the binding protein."
 For example, the chains in the entity description are from one protein, and the other protein is not in the entity description.
-Your responses should adhere to the following formats:
-===
+Your responses should adhere to the following formats and no extra information (no description) should be provided.
+====================
 If the chain ID(s) can be identified, return all relevant IDs with descriptions split by "-" as:
 [ID] - entity description ...
 6 - HEAVY CHAIN
-===
+====================
 If the binding protein cannot be identified, only reply as:
 I cannot identify the binding protein.
-===
+====================
 """
 
 message_PPI = """
-The entry ID {entry_id}, title {title}, abstract {abstract}, and entity description: {entity_description}.
+The entry ID {entry_id}, title {title}, abstract {abstract}, and entity name: {entity_name}.
 """
 
 message_failure = "I cannot identify the binding protein."
