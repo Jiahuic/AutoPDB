@@ -1,11 +1,29 @@
 # AutoPDB
+An AI-powered, simple, easy-to-use tool to automatically get the information from the RCSB PDB database.
+
+## Features
 There are a lot of protein complexes on the PDB database, which provides rich information. 
 However, it is not easy to get the information of the protein complexes, such as the chains belonging to which part of the complex. 
 This project is to provide a tool to automatically get the information of the protein complexes on the PDB database by using the PDB API and LLM.
 
-## Requirements
-Two main packages are required to trigger the program. One package is Ollama and the other is request. The motivation for using request  is to get the information of graphQL in PDBbank through API for PDBbank. And for Ollama, it is used for identifying the quantity of the protein complexes and discovering which of those are binding with each other. The more details will be introduced in the following.
-### request
-[PDBbank](https://www.rcsb.org/)  is a database that serves as a repository for the three-dimensional structural data of large biological molecules, such as proteins and nucleic acids. And we can get one particular protein information and structure through there. And for every particular protein complex, PDBbank provides the information such as *entity_ids*, *pubmed_id*, *rcsb_pubmed_abstract_text*,*title*, properties of chain stored in graphQL on the website. This project *AutoPDB* will gain the important factors titile,abstract, from PDBbank API according to PDBbind database by just using request packages. More details will be shown in the code.
-### Ollama
-[Ollama](https://ollama.com/) is a new software which can support to be downloaded into person laptops and to let people interact with the machine as well like easy version of chatgpt. And Ollama also posts new ollama2 in different data size to train this big model to be as strong as chatgpt. It also provides the usage in python. Since for particular protein complex PDB file, it is difficult to distinguish how many protein complexes are binding with each others and which ones are protein A B C(A B C are distinct protein structures). Thus ollama:70b in Ollama supports us to identify these in an efficient training way. Atfer this, we can get the complete information for what we want to do protein protein binding problem.
+## Installations
+AutoPDB is written in Python and rely on `LangChain`. Simple to install and easy to use.
+
+- [request](https://pypi.org/project/requests/) a third-party library for making HTTP requests in Python. The RCSB PDB API uses the GraphQL query language to access the data.
+- [LangChain](https://www.langchain.com/) is a framework for developing applications powered by language models. 
+- [OpenAI](https://www.openai.com/) provides the LLM model API. If you want to use the openai model, you need to sign up for an API key.
+- [Ollama](https://ollama.com/) provides the open-source LLM model, which can run on your local machine. Open-source models such as llama2, mistral, and gemma are available. 
+
+Install the required packages using the following command:
+```bash
+pip install requests
+pip install langchain, langchain_openai, langchain_community
+```
+
+If you want to use the openai model, you need to sign up for an API key. 
+```bash
+echo "export OPENAI_API_KEY=your-api-key" >> ~/.bashrc # or ~/.zshrc
+```
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
