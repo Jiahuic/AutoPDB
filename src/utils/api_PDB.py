@@ -80,6 +80,8 @@ if __name__ == "__main__":
     import json
     entry_id = "6nk7"
     entry_id = "3ZIA"
+    entry_id = "1CMX"
+    entry_id = "1FAK"
     entry_dict, expression_systems_entity_id = ask_RCSB_PDB(entry_id)
     print(entry_dict)
 
